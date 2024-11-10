@@ -1,0 +1,185 @@
+Implementación de un Sistema Completo
+En esta última clase del curso, vamos a aplicar todos los conceptos aprendidos en las clases anteriores para desarrollar un sistema completo utilizando Python avanzado. El proyecto consistirá en la implementación de un sistema de gestión de reservas para un hotel. Este sistema gestionará:
+
+Reservas: Creación y cancelación de reservas de habitaciones.
+Clientes: Almacenamiento y gestión de la información de los clientes.
+Habitaciones: Verificación de la disponibilidad de las habitaciones.
+Pagos: Procesamiento de pagos de las reservas de forma asincrónica.
+Objetivos:
+Integrar los módulos y paquetes del sistema para que cada funcionalidad esté organizada de manera eficiente.
+Aplicar la programación asincrónica (asyncio) para manejar pagos concurrentes sin bloquear el sistema.
+Utilizar las mejores prácticas Pythonicas, como las recomendaciones de PEP 8, manejo de tipos y validaciones.
+Construir un sistema modular y reutilizable mediante la creación de un paquete Python.
+Requisitos:
+Organizar el código en diferentes módulos y paquetes que gestionen las diferentes partes del sistema.
+Aplicar programación concurrente y asincrónica para procesar múltiples reservas de manera eficiente.
+Implementar validaciones básicas para asegurar que las reservas y los pagos sean gestionados correctamente.
+El sistema debe ser capaz de agregar clientes, verificar la disponibilidad de habitaciones, gestionar reservas y procesar pagos de manera eficaz.
+Este proyecto te ayudará a consolidar los conocimientos adquiridos durante el curso y será un ejemplo de cómo utilizar técnicas avanzadas en un entorno real para construir una aplicación completa y robusta en Python.
+
+1. Estructura del Proyecto
+Vamos a dividir nuestro sistema en diferentes módulos y paquetes para organizar el código de manera eficiente:
+
+Paquetes del proyecto:
+hotel_management/
+    __init__.py
+    reservations.py
+    customers.py
+    rooms.py
+    payments.py
+reservations.py: Maneja la creación y cancelación de reservas.
+customers.py: Gestiona la información de los clientes.
+rooms.py: Gestiona la disponibilidad y características de las habitaciones.
+payments.py: Procesa los pagos de las reservas.
+2. Implementación de Módulos
+2.1. Módulo reservations.py
+Este módulo gestionará la lógica relacionada con la creación y cancelación de reservas.
+
+from collections import defaultdict
+from datetime import datetime
+
+class Reservation:
+    def __init__(self, reservation_id, customer_name, room_number, check_in, check_out):
+        self.reservation_id = reservation_id
+        self.customer_name = customer_name
+        self.room_number = room_number
+        self.check_in = check_in
+        self.check_out = check_out
+
+class ReservationSystem:
+    def __init__(self):
+        # Utilizamos defaultdict para gestionar las reservas
+        self.reservations = defaultdict(list)
+
+    def add_reservation(self, reservation):
+        """Agrega una nueva reserva al sistema."""
+        self.reservations[reservation.room_number].append(reservation)
+        print(f"Reserva creada para {reservation.customer_name} en la habitación {reservation.room_number}")
+
+    def cancel_reservation(self, reservation_id):
+        """Cancela una reserva existente por ID."""
+        for room, reservations in self.reservations.items():
+            for r in reservations:
+                if r.reservation_id == reservation_id:
+                    reservations.remove(r)
+                    print(f"Reserva {reservation_id} cancelada")
+                    return
+        print("Reserva no encontrada")
+
+2.2. Módulo customers.py
+Este módulo gestionará la información de los clientes.
+
+class Customer:
+    def __init__(self, customer_id, name, email):
+        self.customer_id = customer_id
+        self.name = name
+        self.email = email
+
+class CustomerManagement:
+    def __init__(self):
+        self.customers = {}
+
+    def add_customer(self, customer):
+        """Agrega un nuevo cliente al sistema."""
+        self.customers[customer.customer_id] = customer
+        print(f"Cliente {customer.name} agregado.")
+
+    def get_customer(self, customer_id):
+        """Obtiene la información de un cliente por ID."""
+        return self.customers.get(customer_id, "Cliente no encontrado.")
+
+2.3. Módulo rooms.py
+Este módulo gestionará las habitaciones disponibles en el hotel.
+
+class Room:
+    def __init__(self, room_number, room_type, price):
+        self.room_number = room_number
+        self.room_type = room_type
+        self.price = price
+        self.available = True
+
+class RoomManagement:
+    def __init__(self):
+        self.rooms = {}
+
+    def add_room(self, room):
+        """Agrega una nueva habitación al sistema."""
+        self.rooms[room.room_number] = room
+        print(f"Habitación {room.room_number} agregada.")
+
+    def check_availability(self, room_number):
+        """Verifica si una habitación está disponible."""
+        room = self.rooms.get(room_number)
+        if room and room.available:
+            print(f"Habitación {room_number} está disponible.")
+            return True
+        print(f"Habitación {room_number} no está disponible.")
+        return False
+
+2.4. Módulo payments.py
+Este módulo procesará los pagos utilizando asincronismo con asyncio.
+
+import asyncio
+import random
+
+async def process_payment(customer_name, amount):
+    """Simula el procesamiento de un pago."""
+    print(f"Procesando pago de {customer_name} por ${amount}...")
+    await asyncio.sleep(random.randint(1, 3))  # Simula una operación de pago
+    print(f"Pago de ${amount} completado para {customer_name}")
+    return True
+
+3. Implementación del Sistema Completo
+En el archivo main.py, vamos a integrar los módulos y utilizar programación concurrente y asincrónica para procesar varias reservas y pagos al mismo tiempo.
+
+import asyncio
+from hotel_management.reservations import Reservation, ReservationSystem
+from hotel_management.customers import Customer, CustomerManagement
+from hotel_management.rooms import Room, RoomManagement
+from hotel_management.payments import process_payment
+from hotel_management.datetime import datetime
+
+async def main():
+    # Inicializar sistemas
+    reservation_system = ReservationSystem()
+    customer_mgmt = CustomerManagement()
+    room_mgmt = RoomManagement()
+
+    # Crear habitaciones
+    room_mgmt.add_room(Room(101, "Single", 100))
+    room_mgmt.add_room(Room(102, "Double", 150))
+
+    # Agregar clientes
+    customer1 = Customer(1, "Alice", "alice@example.com")
+    customer_mgmt.add_customer(customer1)
+
+    customer2 = Customer(2, "Bob", "bob@example.com")
+    customer_mgmt.add_customer(customer2)
+
+    # Verificar disponibilidad de habitaciones
+    if room_mgmt.check_availability(101):
+        reservation = Reservation(1, "Alice", 101, datetime.now(), datetime.now())
+        reservation_system.add_reservation(reservation)
+
+        # Procesar pago asincrónicamente
+        await process_payment("Alice", 100)
+
+    if room_mgmt.check_availability(102):
+        reservation = Reservation(2, "Bob", 102, datetime.now(), datetime.now())
+        reservation_system.add_reservation(reservation)
+
+        # Procesar pago asincrónicamente
+        await process_payment("Bob", 150)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+4. Explicación del Proyecto
+En este proyecto, aplicamos los conceptos de las clases anteriores:
+
+Módulos y paquetes: Creamos un sistema modular donde cada parte (reservas, clientes, habitaciones, pagos) está bien organizada en su propio módulo.
+Validaciones: A través de la lógica implementada en la gestión de habitaciones y reservas.
+Asincronismo (asyncio): Usamos asyncio para procesar pagos de manera concurrente sin bloquear el sistema.
+Decoradores y métodos estáticos: Aunque no se usan directamente aquí, podrían aplicarse para funcionalidades específicas como verificaciones adicionales o cálculo de descuentos.
+5. Conclusión
+Este proyecto final integra las diferentes áreas cubiertas en el curso, demostrando cómo las técnicas avanzadas de Python pueden combinarse para construir un sistema robusto y eficiente.
