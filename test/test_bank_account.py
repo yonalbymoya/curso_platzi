@@ -17,19 +17,19 @@ class BankAccountTest(unittest.TestCase):
 
     def test_deposit(self):
         new_balance = self.account.deposit(500)
-        assert new_balance == 1500
+        self.assertEqual(new_balance, 1500, "El balance no es igual.")
     
     def test_withdrew(self):
         new_balance = self.account.withdrew(200)
-        assert new_balance == 800
+        self.assertEqual(new_balance, 800,"El balance no es 200")
 
     def test_balance(self):
-        assert self.account.get_balance() == 1000
+        self.assertEqual(self.account.get_balance(), 1000,"El balance no es igual")
         
     def test_trasnsaction_log(self):
         new_balance = self.account.deposit(500)
         os.path.exists("transaction_log.txt")
-        assert os.path.exists("transaction_log.txt")
+        self.assertTrue(os.path.exists("transaction_log.txt"))
         
     def test_count_transaction(self):
         assert self._count_lines(self.account.log_file) == 1
