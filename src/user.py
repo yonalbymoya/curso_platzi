@@ -8,5 +8,5 @@ class User:
         self.accounts.append(account)
 
     def get_total_balance(self):
-        return sum(account.get_balance() for account in self.add_accounts)
+        return sum(account.get_balance() for account in self.accounts)
     
