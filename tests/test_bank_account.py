@@ -45,3 +45,17 @@ class BankAccountTests(unittest.TestCase):
     def test_withdraw_during_bussines_hours(self, mock_datetime):
         mock_datetime.now.return_value.hour = 10
         self.account.withdraw(100)
+
+    def test_deposit_multiple_ammounts(self):
+        test_cases = [
+            {"ammount": 100, "expected": 1100},
+            {"ammount": 3000, "expected": 4000},
+            {"ammount": 4500, "expected": 5500}
+        ]
+
+        for case in test_cases:
+            with self.subTest(case=case):
+                self.account = BankAccount(balance=1000, log_file="transactions.txt")
+                new_balance = self.account.deposit(case["ammount"])
+                self.assertEqual(new_balance, case["expected"])
+
