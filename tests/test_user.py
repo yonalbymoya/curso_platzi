@@ -24,7 +24,7 @@ class UserTests(unittest.TestCase):
             log_file = self.faker.file_name(extension="txt")
             
             )
-            self.user.add_account(account=bank_account)
+            self.user.add_accounts(account=bank_account)
 
         expected_value = self.user.get_total_balance()
         value = sum(account.get_balance() for account in self.user.accounts)
