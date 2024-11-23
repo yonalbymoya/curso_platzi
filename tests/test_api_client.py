@@ -24,15 +24,17 @@ class ApiClientTests(unittest.TestCase):
     @patch("src.api_client.requests.get")
     def test_get_location_returns_side_effect(self, mock_get):
         mock_get.side_effect = [
-            requests.exceptions.RequestException("Service Unavailable")
+            requests.exceptions.RequestException("Service Unavailable"),
+        
+            unittest.mock.Mock(
+                    status_code=200,
+                    json=lambda: {
+                        "countryName": "USA",
+                        "regionName": "FLORIDA",
+                        "cityName": "MIAMI",
+                    },
+                ),
         ]
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
-            "countryName": "USA",
-            "regionName": "FLORIDA",
-            "cityName": "MIAMI",
-        }
-
 
         with self.assertRaises(
             requests.exceptions.RequestException("Service Unavailable")):
