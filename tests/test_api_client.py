@@ -37,7 +37,7 @@ class ApiClientTests(unittest.TestCase):
         ]
 
         with self.assertRaises(
-            requests.exceptions.RequestException("Service Unavailable")):
+            requests.exceptions.RequestException):
             get_location("8.8.8.8")
 
         result = get_location("8.8.8.8")
